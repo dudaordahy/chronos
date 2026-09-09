@@ -1,0 +1,1 @@
+<div className={style.heading}></div>
