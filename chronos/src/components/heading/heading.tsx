@@ -1,1 +1,12 @@
-<div className={style.heading}></div>
+import React from "react";
+import style from "./heading.module.css";
+
+type HeadingProps = {
+    children: React.ReactNode;
+};
+
+export function Heading({ children }: HeadingProps) {
+    return (
+        <h1 className={`${style.heading} ${style.paragraph}`}>{children}</h1>
+    );
+}

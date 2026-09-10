@@ -27,11 +27,11 @@ body {
     color: var(--text-default);
 }
 
-.form, .formRow{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 2.4rem;
+.form,
+.formRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2.4rem;
 }
- 
