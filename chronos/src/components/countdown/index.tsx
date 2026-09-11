@@ -2,7 +2,7 @@ import { useTaskContext } from "../../contexts/taskContext/useTaskContext";
 
 import styles from "./styles.module.css";
 
-export function Countdown() {
+export function CountDown() {
   const taskContext = useTaskContext();
 
   return (

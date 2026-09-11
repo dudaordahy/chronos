@@ -1,39 +1,57 @@
-case TaskActionTypes.COMPLETE_TASK: {
-  return {
-    ...state,
+import { TaskStateModel } from "../../models/taskStateModel";
+/* import { getNextCycle } from "../../utils/getNextCycle"; */
+import { formatSecondsToMinutes } from "../../utils/formatSecondsToMinutes";
+import { TaskActionModel, TaskActionTypes } from "./taskActions";
 
-    activeTask: null,
+export function taskReducer(
+  state: TaskStateModel,
+  action: TaskActionModel,
+): TaskStateModel {
+  switch (action.type) {
+    case TaskActionTypes.COMPLETE_TASK: {
 
-    secondsRemaining: 0,
+/*       const newTask = action.payload;
+      const nextCycle = getNextCycle(state.currentCycle);
+      const secondsRemaining = newTask.duration * 60; */
 
-    formattedSecondsRemaining: "00:00",
+      return {
+        ...state,
 
-    tasks: state.tasks.map((task) => {
-      if (
-        state.activeTask &&
-        state.activeTask.id === task.id
-      ) {
-        return {
-          ...task,
-          completeDate: Date.now(),
-        };
-      }
+        activeTask: null,
 
-      return task;
-    }),
-  };
-}
+        secondsRemaining: 0,
 
-case TaskActionTypes.COUNT_DOWN: {
-  return {
-    ...state,
+        formattedSecondsRemaining: "00:00",
 
-    secondsRemaining:
-      action.payload.secondsRemaining,
+        tasks: state.tasks.map((task) => {
+          if (
+            state.activeTask &&
+            state.activeTask.id === task.id
+          ) {
+            return {
+              ...task,
+              completeDate: Date.now(),
+            };
+          }
 
-    formattedSecondsRemaining:
-      formatSecondsToMinutes(
-        action.payload.secondsRemaining,
-      ),
-  };
+          return task;
+        }),
+      };
+    }
+
+    case TaskActionTypes.COUNT_DOWN: {
+      return {
+        ...state,
+
+        secondsRemaining:
+          action.payload.secondsRemaining,
+
+        formattedSecondsRemaining:
+          formatSecondsToMinutes(
+            action.payload.secondsRemaining,
+          ),
+      };
+    }
+  }
+  return state;
 }

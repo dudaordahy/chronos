@@ -1,36 +1,34 @@
-let isRunning = false;
+import type { TaskStateModel } from "../models/taskStateModel";
 
-self.onmessage = function (event) {
-  if (isRunning) return;
+let instance: TimerWorkerManager | null = null;
 
-  isRunning = true;
+export class TimerWorkerManager {
+  private worker: Worker;
 
-  const state = event.data;
-
-  const {
-    activeTask,
-    secondsRemaining,
-  } = state;
-
-  const endDate =
-    activeTask.startDate +
-    secondsRemaining * 1000;
-
-  const now = Date.now();
-
-  let countDownSeconds =
-    Math.ceil((endDate - now) / 1000);
-
-  function tick() {
-    self.postMessage(countDownSeconds);
-
-    const now = Date.now();
-
-    countDownSeconds =
-      Math.floor((endDate - now) / 1000);
-
-    setTimeout(tick, 1000);
+  private constructor() {
+    this.worker = new Worker(
+      new URL("./timerWorker.js", import.meta.url),
+    );
   }
 
-  tick();
-};
+  static getInstance() {
+    if (!instance) {
+      instance = new TimerWorkerManager();
+    }
+
+    return instance;
+  }
+
+  postMessage(message: TaskStateModel) {
+    this.worker.postMessage(message);
+  }
+
+  onmessage(cb: (e: MessageEvent) => void) {
+    this.worker.onmessage = cb;
+  }
+
+  terminate() {
+    this.worker.terminate();
+    instance = null;
+  }
+}
