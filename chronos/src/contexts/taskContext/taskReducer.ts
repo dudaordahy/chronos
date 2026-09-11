@@ -1,30 +1,39 @@
-import type { TaskStateModel } from "../../models/taskStateModel";
+case TaskActionTypes.COMPLETE_TASK: {
+  return {
+    ...state,
 
-import {
-  TaskActionTypes,
-  type TaskActionModel,
-} from "./taskActions";
+    activeTask: null,
 
-export function taskReducer(
-  state: TaskStateModel,
-  action: TaskActionModel,
-): TaskStateModel {
-  switch (action.type) {
-    case TaskActionTypes.START_TASK: {
-      // Implementação futura
-      return state;
-    }
+    secondsRemaining: 0,
 
-    case TaskActionTypes.INTERRUPT_TASK: {
-      // Implementação futura
-      return state;
-    }
+    formattedSecondsRemaining: "00:00",
 
-    case TaskActionTypes.RESET_STATE: {
-      // Implementação futura
-      return state;
-    }
-  }
+    tasks: state.tasks.map((task) => {
+      if (
+        state.activeTask &&
+        state.activeTask.id === task.id
+      ) {
+        return {
+          ...task,
+          completeDate: Date.now(),
+        };
+      }
 
-  return state;
+      return task;
+    }),
+  };
+}
+
+case TaskActionTypes.COUNT_DOWN: {
+  return {
+    ...state,
+
+    secondsRemaining:
+      action.payload.secondsRemaining,
+
+    formattedSecondsRemaining:
+      formatSecondsToMinutes(
+        action.payload.secondsRemaining,
+      ),
+  };
 }

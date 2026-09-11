@@ -5,20 +5,23 @@ import {
   StopCircleIcon,
 } from "lucide-react";
 
-import { useTaskContext } from "../../contexts/taskContext/useTaskContext";
-
-import type { TaskModel } from "../../models/taskModel";
-
-import { formatSecondsToMinutes } from "../../utils/formatSecondsToMinutes";
-import { getNextCycle } from "../../utils/getNextCycle";
-import { getNextCycleType } from "../../utils/getNextCycleType";
-
 import { Cycles } from "../cycles";
 import { DefaultButton } from "../defaultButton";
 import { DefaultInput } from "../defaultInput";
 
+import { useTaskContext } from "../../contexts/taskContext/useTaskContext";
+
+import { getNextCycle } from "../../utils/getNextCycle";
+import { getNextCycleType } from "../../utils/getNextCycleType";
+
+import { TaskActionTypes } from "../../contexts/taskContext/taskActions";
+
+import type { TaskModel } from "../../models/taskModel";
+
+import { Tips } from "../tips";
+
 export function MainForm() {
-  const { state, setState } = useTaskContext();
+  const { state, dispatch } = useTaskContext();
 
   const taskNameInput =
     useRef<HTMLInputElement>(null);
@@ -54,61 +57,23 @@ export function MainForm() {
       type: nextCycleType,
     };
 
-    const secondsRemaining =
-      newTask.duration * 60;
-
-    setState((prevState) => {
-      return {
-        ...prevState,
-        config: { ...prevState.config },
-        activeTask: newTask,
-        currentCycle: nextCycle,
-        secondsRemaining,
-        formattedSecondsRemaining:
-          formatSecondsToMinutes(
-            secondsRemaining,
-          ),
-        tasks: [
-          ...prevState.tasks,
-          newTask,
-        ],
-      };
+    dispatch({
+      type: TaskActionTypes.START_TASK,
+      payload: newTask,
     });
   }
 
   function handleInterruptTask() {
-    setState((prevState) => {
-      return {
-        ...prevState,
-
-        activeTask: null,
-
-        secondsRemaining: 0,
-
-        formattedSecondsRemaining: "00:00",
-
-        tasks: prevState.tasks.map((task) => {
-          if (
-            prevState.activeTask &&
-            prevState.activeTask.id === task.id
-          ) {
-            return {
-              ...task,
-              interruptDate: Date.now(),
-            };
-          }
-
-          return task;
-        }),
-      };
+    dispatch({
+      type: TaskActionTypes.INTERRUPT_TASK,
     });
   }
 
   return (
     <form
+      onSubmit={handleCreateNewTask}
       className="form"
       action=""
-      onSubmit={handleCreateNewTask}
     >
       <div className="formRow">
         <DefaultInput
@@ -122,7 +87,7 @@ export function MainForm() {
       </div>
 
       <div className="formRow">
-        <p>Lorem ipsum dolor sit amet consectetur.</p>
+        <Tips/>
       </div>
 
       <div className="formRow">
